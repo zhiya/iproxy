@@ -16,7 +16,7 @@
     "jade": "0.26.1"
   },
   "engines": {
-    "node": ">= 0.6.17"
+    "node": ">= 0.6.19"
   },
   "_id": "iproxy@0.0.1",
   "optionalDependencies": {},
