@@ -1,0 +1,27 @@
+{
+  "name": "iproxy",
+  "description": "this's my own proxy, I can decide any receiving when I surfing on the internet.",
+  "version": "0.0.1",
+  "author": {
+    "name": "Vendar Tyan",
+    "email": "eplaylity@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/zhiya/iproxy.git"
+  },
+  "main": "./index.js",
+  "dependencies": {
+    "express": "2.5.9",
+    "jade": "0.26.1"
+  },
+  "engines": {
+    "node": ">= 0.6.17"
+  },
+  "_id": "iproxy@0.0.1",
+  "optionalDependencies": {},
+  "_engineSupported": true,
+  "_npmVersion": "1.1.21",
+  "_nodeVersion": "v0.6.19",
+  "_defaultsLoaded": true,
+}
