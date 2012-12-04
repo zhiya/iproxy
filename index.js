@@ -1,5 +1,6 @@
 var http = require('http'),
     url = require('url'),
+    fs = require('fs'),
     irule = require('./irule');
 
 var proxyserver = http.createServer(function(clientreq,clientres){
@@ -16,7 +17,7 @@ var proxyserver = http.createServer(function(clientreq,clientres){
   var requrl = irule.filter(clienturl.host+clienturl.path);
 
   if(!requrl){
-    console.warn('[DENY] - %s%s - %s',clienturl.host,clienturl.path,cip);
+    irule.logger.info('[DENY] - %s%s - %s',clienturl.host,clienturl.path,cip);
     clientres.writeHead(404);
     return clientres.end();
   }
@@ -32,30 +33,45 @@ var proxyserver = http.createServer(function(clientreq,clientres){
 
   var t = Date.now();
   var l = 0;
-  function end(){
+  var cfd = null;
+
+  function cleanup(){
     irule.footprint(
       proxyreqopts.hostname,
       clienturl.pathname,
       clienturl.query,
       proxyreqopts.headers.cookie,
       cip, l, Date.now()-t);
+    if(cfd){
+      fs.close(cfd);
+    }
     clientres.end();
   }
   var proxyreq = http.request(proxyreqopts,function(proxyres){
+    if(irule.cachefilter(proxyres.headers['content-type'])){
+      var cachepath = clienturl.hostname+clienturl.pathname;
+      cfd = irule.openCacheFile(cachepath);
+      if(cfd){
+        irule.logger.trace('[CACHE] - %s',cachepath);
+      }
+    }
     clientres.writeHead(proxyres.statusCode,proxyres.headers);
     proxyres.on('data',function(chunk){
       clientres.write(chunk);
+      if(cfd){
+        fs.write(cfd,chunk,0,chunk.length,l);
+      }
       l += chunk.length;
     });
     proxyres.on('end',function(){
-      end();
+      cleanup();
     });
     proxyres.on('close',function(){
-      end();
+      cleanup();
     });
   });
   proxyreq.on('error',function(){
-    end();
+    cleanup();
   });
   proxyreq.end();
 });

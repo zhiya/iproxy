@@ -1,6 +1,9 @@
 {
+    "cache":{
+        "path": "/data/iproxy/cache"
+    },
     "log":{
         "level": "TRACE",
-        "path": "/data/iproxy.log"
+        "path": "/data/iproxy/footprint.log"
     }
 }
